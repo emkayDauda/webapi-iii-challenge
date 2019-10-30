@@ -9,11 +9,17 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id',validatePostId, (req, res) => {
-    res.status(201).json(req.posts)
+    res.status(201).json(req.post)
 });
 
-router.delete('/:id', (req, res) => {
-
+router.delete('/:id', validatePostId, (req, res) => {
+    const { id } = req.post
+    postsDb.remove(id)
+    .then(flag => {
+        if (flag) {
+            res.status(201).json({message: 'deleted', data: req.post})
+        }
+    })
 });
 
 router.put('/:id', (req, res) => {
@@ -25,9 +31,9 @@ router.put('/:id', (req, res) => {
 function validatePostId(req, res, next) {
     const { id } = req.params;
     postsDb.getById(id)
-    .then(posts => {
-        if(posts) {
-            req.posts = posts;
+    .then(post => {
+        if(post) {
+            req.post = post;
             next();
         }
         else res.status(404).json({message: "Post with that ID exists not"})

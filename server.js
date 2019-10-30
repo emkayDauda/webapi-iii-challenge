@@ -5,14 +5,14 @@ const postsRouter = require('./posts/postRouter')
 
 const server = express();
 
-// server.use(helmet())
+server.use(helmet())
 server.use(express.json())
 
 
 server.get('/', logger, (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`)
 });
-server.use('/api/posts', postsRouter)
+server.use('/api/posts', logger, postsRouter)
 
 //custom middleware
 
