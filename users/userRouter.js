@@ -20,8 +20,8 @@ router.get('/', (req, res) => {
     .catch(err => res.status(500).json({error: err.message}))
 });
 
-router.get('/:id', (req, res) => {
-
+router.get('/:id', validateUserId, (req, res) => {
+    res.status(201).json({message: "Success", data: req.user})
 });
 
 router.get('/:id/posts', validateUserId, (req, res) => {
