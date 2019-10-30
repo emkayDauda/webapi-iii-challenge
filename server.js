@@ -9,8 +9,8 @@ server.get('/', logger, (req, res) => {
 //custom middleware
 
 function logger(req, res, next) {
-  console.log(req)
+  console.log(`Method: ${req.method}\nUrl => ${req.url}\nTimestamp => ${Date.now()}`)
   next()
-};
+}
 
 module.exports = server;
