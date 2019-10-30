@@ -22,8 +22,14 @@ router.delete('/:id', validatePostId, (req, res) => {
     })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validatePostId, (req, res) => {
+    const { id } = req.post
+    postsDb.update(id)
+    .then(flag => {
+        if (flag) {
 
+        }
+    })
 });
 
 // custom middleware
@@ -39,6 +45,10 @@ function validatePostId(req, res, next) {
         else res.status(404).json({message: "Post with that ID exists not"})
     })
     .catch(err => res.status(500).json({error: err, message: "Failed to hit server"}))
+}
+
+function validatePostBody(req, res, next) {
+    // const {} = req.body;
 }
 
 module.exports = router;
