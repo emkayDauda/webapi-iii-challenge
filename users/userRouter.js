@@ -11,7 +11,9 @@ router.post("/", validateUser, (req, res) => {
     .catch(err => res.status(500).json({ error: err.message }));
 });
 
-router.post("/:id/posts", validateUserId, (req, res) => {});
+router.post("/:id/posts", [validateUserId, validatePost], (req, res) => {
+    
+});
 
 router.get("/", (req, res) => {
   userDb
@@ -43,7 +45,16 @@ router.delete("/:id", validateUserId, (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", [validateUserId, validateUser], (req, res) => {
+    userDb.update(req.user.id, req.user)
+    .then(flag => {
+        if (flag) {
+            res.status(201).json(req.user)
+        }
+        else res.status(500).json({error: "Failed to update user"})
+    })
+    .catch(err => res.status(500).json({error: err.message}))
+});
 
 //custom middleware
 
@@ -65,11 +76,23 @@ function validateUser(req, res, next) {
     const user = {
       name: req.body.name
     };
-    req.user = user;
+    req.user = {...req.user, name: user.name};
     next();
   }
 }
 
-function validatePost(req, res, next) {}
+function validatePost(req, res, next) {
+    if (!Object.keys(req.body).length) {
+        res.status(400).json({ message: "missing user data!" });
+      } else if (!req.body.text) {
+        res.status(400).json({ message: 'missing required "name" field!' });
+      } else {
+        const post = {
+          name: req.body.text
+        };
+        req.post = post;
+        next();
+      }
+}
 
 module.exports = router;
