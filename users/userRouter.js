@@ -5,7 +5,7 @@ const router = express.Router();
 const userDb = require('./userDb')
 
 router.post('/', (req, res) => {
-
+    
 });
 
 router.post('/:id/posts', validateUserId, (req, res) => {
@@ -13,7 +13,11 @@ router.post('/:id/posts', validateUserId, (req, res) => {
 });
 
 router.get('/', (req, res) => {
-
+    userDb.get()
+    .then(users => {
+        res.status(201).json(users);
+    })
+    .catch(err => res.status(500).json({error: err.message}))
 });
 
 router.get('/:id', (req, res) => {
@@ -28,8 +32,13 @@ router.get('/:id/posts', validateUserId, (req, res) => {
     .catch(err => res.status(500).json({error: err.message}))
 });
 
-router.delete('/:id', (req, res) => {
-
+router.delete('/:id', validateUserId, (req, res) => {
+    userDb.remove(req.user.id)
+    .then(flag => {
+        if (flag) {
+            res.status(201).json({message: "deleted", data: req.user})
+        }
+    })
 });
 
 router.put('/:id', (req, res) => {
